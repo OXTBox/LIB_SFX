@@ -1,0 +1,9 @@
+__pycache__/
+*.pyc
+*:Zone.Identifier
+*.dll
+*.obj
+*.lib
+*.exp
+*.lcm
+*.wav

@@ -1,0 +1,77 @@
+-- LIB_SFX test. Runs in a real Windows LiveCode through LIB_MCP (tests/run_test.sh).
+-- It makes no sound: nothing here calls Sfx.Play.
+local tLog, tLib, tDir, tA, tB, tC, tWav, tPeaks, tWhy
+put "//wsl$/Ubuntu/home/igame3d/projects/LIB_SFX/livecode/lib_sfx.livecodescript" into tLib
+start using stack tLib
+Sfx.Start
+put "start:" && (the result is empty) && the result & return after tLog
+put "ready:" && Sfx.Ready() && Sfx.Version() & return after tLog
+put "C:/xtsfx/test_out" into tDir
+Sfx.SetFolder tDir
+put "folder:" && (the result is empty) & return after tLog
+
+-- every preset makes a wav
+repeat for each item tP in Sfx.Presets()
+   Sfx.Make "t_" & tP, tP, 11
+   put the result into tWhy
+   put Sfx.File("t_" & tP) into tWav
+   put "preset" && tP & ":" && (tWhy is empty) && (there is a file tWav) \
+         && (Sfx.Duration("t_" & tP) > 0.02) & return after tLog
+end repeat
+
+-- the same seed gives the same sound, another seed another
+Sfx.Make "a", "laser", 5
+put Sfx.Params("a") into tA
+Sfx.Make "b", "laser", 5
+put Sfx.Params("b") into tB
+Sfx.Make "c", "laser", 6
+put Sfx.Params("c") into tC
+put "same seed same sound:" && (tA is tB) & return after tLog
+put "other seed other sound:" && (tA is not tC) & return after tLog
+put "24 numbers:" && (the number of lines of tA is 24) & return after tLog
+put "same wav bytes:" && (url ("binfile:" & Sfx.File("a")) is url ("binfile:" & Sfx.File("b"))) & return after tLog
+
+-- the wav is a wav
+put url ("binfile:" & Sfx.File("a")) into tWav
+put "wav header:" && (byte 1 to 4 of tWav is "RIFF") && (byte 9 to 12 of tWav is "WAVE") & return after tLog
+put "wav length:" && (the number of bytes of tWav is 44 + 2 * round(Sfx.Duration("a") * 44100)) & return after tLog
+
+-- one number
+Sfx.Set "a", "waveType", 2
+put "set:" && (the result is empty) && (Sfx.Get("a", "waveType") is 2) & return after tLog
+Sfx.Set "a", "nonsense", 1
+put "set unknown refused:" && (the result is not empty) & return after tLog
+Sfx.SetParams "new", "sustainTime=0.2" & return & "startFrequency=0.5"
+put "setparams makes a sound:" && (the result is empty) && Sfx.Has("new") && (abs(Sfx.Get("new", "startFrequency") - 0.5) < 0.0001) & return after tLog
+
+-- mutate
+Sfx.Mutate "c", 3
+put "mutate changes it:" && (the result is empty) && (Sfx.Params("c") is not tC) & return after tLog
+
+-- .rfx out and back
+Sfx.Save "b", tDir & "/b.rfx"
+put "save rfx:" && (the result is empty) && (the number of bytes of url ("binfile:" & tDir & "/b.rfx") is 104) & return after tLog
+Sfx.Load "back", tDir & "/b.rfx"
+put "load rfx:" && (the result is empty) && (Sfx.Params("back") is tB) & return after tLog
+Sfx.Load "bad", tDir & "/a.wav"
+put "load refuses a non-rfx:" && (the result is not empty) && (not Sfx.Has("bad")) & return after tLog
+
+-- export in another format
+Sfx.Export "b", tDir & "/b_22k_8bit_stereo.wav", 22050, 8, 2
+put url ("binfile:" & tDir & "/b_22k_8bit_stereo.wav") into tWav
+put "export 22050/8/2:" && (the result is empty) && (byteToNum(byte 23 of tWav) is 2) && (byteToNum(byte 35 of tWav) is 8) & return after tLog
+
+-- shape
+put Sfx.Peaks("b", 40) into tPeaks
+put "peaks:" && (the number of items of tPeaks is 40) && (max(tPeaks) > 0) && (max(tPeaks) <= 1000) & return after tLog
+
+-- refusals
+Sfx.Make "x", "kazoo", 1
+put "unknown preset refused:" && (the result is not empty) & return after tLog
+Sfx.Play "nobody"
+put "play unknown refused:" && (the result is not empty) & return after tLog
+Sfx.Forget "a"
+put "forget:" && (not Sfx.Has("a")) && (there is no file (tDir & "/a.wav")) & return after tLog
+put "names:" && the number of lines of Sfx.Names() & return after tLog
+stop using stack tLib
+return tLog

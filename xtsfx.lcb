@@ -1,0 +1,144 @@
+-- LIB_SFX: xtsfx, rfxgen sound effects for xTalk. Hand-written; the C side is c/xtsfx.c.
+-- The DLL keeps ONE current sound (24 numbers). Every handler reads or changes it.
+library org.xtalk.xtsfx
+
+metadata title is "xtsfx"
+metadata author is "LIB_SFX"
+metadata version is "0.1.0"
+
+use com.livecode.foreign
+
+-- Text results: the C side writes into its own buffer and answers the length;
+-- this reads the bytes back one at a time. No C string ever crosses the boundary.
+private foreign handler _xtsfx_ResultByte(in p0 as CInt) returns CInt binds to "c:xtsfx>xtsfx_ResultByte!cdecl"
+private handler xtResult(in pLength as Number) returns String
+	variable tOut as String
+	variable tIndex as Number
+	variable tCode as Number
+	put "" into tOut
+	put 0 into tIndex
+	repeat while tIndex < pLength
+		unsafe
+			put _xtsfx_ResultByte(tIndex) into tCode
+		end unsafe
+		put the char with code tCode after tOut
+		add 1 to tIndex
+	end repeat
+	return tOut
+end handler
+
+private foreign handler _xtsfx_Version() returns CInt binds to "c:xtsfx>xtsfx_Version!cdecl"
+public handler xtsfx_Version() returns String
+	variable tLength as Number
+	unsafe
+		put _xtsfx_Version() into tLength
+	end unsafe
+	return xtResult(tLength)
+end handler
+
+private foreign handler _xtsfx_Reset() returns nothing binds to "c:xtsfx>xtsfx_Reset!cdecl"
+public handler xtsfx_Reset() returns nothing
+	unsafe
+		_xtsfx_Reset()
+	end unsafe
+end handler
+
+private foreign handler _xtsfx_Presets() returns CInt binds to "c:xtsfx>xtsfx_Presets!cdecl"
+public handler xtsfx_Presets() returns String
+	variable tLength as Number
+	unsafe
+		put _xtsfx_Presets() into tLength
+	end unsafe
+	return xtResult(tLength)
+end handler
+
+private foreign handler _xtsfx_Preset(in p0 as ZStringNative, in p1 as CInt) returns CInt binds to "c:xtsfx>xtsfx_Preset!cdecl"
+public handler xtsfx_Preset(in pPreset as String, in pSeed as Number) returns Boolean
+	variable tOK as Number
+	unsafe
+		put _xtsfx_Preset(pPreset, pSeed) into tOK
+	end unsafe
+	return tOK is not 0
+end handler
+
+private foreign handler _xtsfx_Mutate(in p0 as CInt) returns nothing binds to "c:xtsfx>xtsfx_Mutate!cdecl"
+public handler xtsfx_Mutate(in pSeed as Number) returns nothing
+	unsafe
+		_xtsfx_Mutate(pSeed)
+	end unsafe
+end handler
+
+private foreign handler _xtsfx_SetParam(in p0 as ZStringNative, in p1 as CDouble) returns CInt binds to "c:xtsfx>xtsfx_SetParam!cdecl"
+public handler xtsfx_SetParam(in pName as String, in pValue as Number) returns Boolean
+	variable tOK as Number
+	unsafe
+		put _xtsfx_SetParam(pName, pValue) into tOK
+	end unsafe
+	return tOK is not 0
+end handler
+
+private foreign handler _xtsfx_GetParam(in p0 as ZStringNative) returns CDouble binds to "c:xtsfx>xtsfx_GetParam!cdecl"
+public handler xtsfx_GetParam(in pName as String) returns Number
+	unsafe
+		return _xtsfx_GetParam(pName)
+	end unsafe
+end handler
+
+private foreign handler _xtsfx_GetParams() returns CInt binds to "c:xtsfx>xtsfx_GetParams!cdecl"
+public handler xtsfx_GetParams() returns String
+	variable tLength as Number
+	unsafe
+		put _xtsfx_GetParams() into tLength
+	end unsafe
+	return xtResult(tLength)
+end handler
+
+private foreign handler _xtsfx_SetParams(in p0 as ZStringNative) returns CInt binds to "c:xtsfx>xtsfx_SetParams!cdecl"
+public handler xtsfx_SetParams(in pText as String) returns Number
+	unsafe
+		return _xtsfx_SetParams(pText)
+	end unsafe
+end handler
+
+private foreign handler _xtsfx_LoadRfx(in p0 as ZStringNative) returns CInt binds to "c:xtsfx>xtsfx_LoadRfx!cdecl"
+public handler xtsfx_LoadRfx(in pPath as String) returns Boolean
+	variable tOK as Number
+	unsafe
+		put _xtsfx_LoadRfx(pPath) into tOK
+	end unsafe
+	return tOK is not 0
+end handler
+
+private foreign handler _xtsfx_SaveRfx(in p0 as ZStringNative) returns CInt binds to "c:xtsfx>xtsfx_SaveRfx!cdecl"
+public handler xtsfx_SaveRfx(in pPath as String) returns Boolean
+	variable tOK as Number
+	unsafe
+		put _xtsfx_SaveRfx(pPath) into tOK
+	end unsafe
+	return tOK is not 0
+end handler
+
+private foreign handler _xtsfx_Duration() returns CDouble binds to "c:xtsfx>xtsfx_Duration!cdecl"
+public handler xtsfx_Duration() returns Number
+	unsafe
+		return _xtsfx_Duration()
+	end unsafe
+end handler
+
+private foreign handler _xtsfx_Peaks(in p0 as CInt) returns CInt binds to "c:xtsfx>xtsfx_Peaks!cdecl"
+public handler xtsfx_Peaks(in pCount as Number) returns String
+	variable tLength as Number
+	unsafe
+		put _xtsfx_Peaks(pCount) into tLength
+	end unsafe
+	return xtResult(tLength)
+end handler
+
+private foreign handler _xtsfx_ExportWav(in p0 as ZStringNative, in p1 as CInt, in p2 as CInt, in p3 as CInt) returns CInt binds to "c:xtsfx>xtsfx_ExportWav!cdecl"
+public handler xtsfx_ExportWav(in pPath as String, in pRate as Number, in pBits as Number, in pChannels as Number) returns Number
+	unsafe
+		return _xtsfx_ExportWav(pPath, pRate, pBits, pChannels)
+	end unsafe
+end handler
+
+end library
