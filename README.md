@@ -54,7 +54,11 @@ Underneath, the extension's own handlers can be called directly (`xtsfx_Preset`,
 "current" sound; the script library is what gives sounds names.
 
 **With xt3d** (several sounds at once): `put xt3d_LoadSound(Sfx.File("pickup")) into tHandle`, then
-`xt3d_PlaySound tHandle`. Not tried yet.
+`xt3d_PlaySound tHandle`. Tried 18 Nov in the xt3d bench standalone: 8 presets playing at once
+(`xt3d_IsSoundPlaying` true for all 8), plus `xt3d_LoadSoundAlias` copies of one sound on top of
+each other. `demos/sfx_xt3d_cacophony.livecodescript` (`Cacophony`) does it, with pan and pitch.
+Run it in the xt3d bench, not LIB_MCP's standalone: there `load extension` of xt3d failed with
+"unable to load foreign library" (not looked into).
 
 ## Layout
 
@@ -65,6 +69,7 @@ Underneath, the extension's own handlers can be called directly (`xtsfx_Preset`,
 | `xtsfx.lcb` | the LiveCode Builder binding, hand-written (15 handlers) |
 | `build.bat` | Windows build into `C:\xtsfx\extension` |
 | `livecode/lib_sfx.livecodescript` | the script library: `Sfx.*` |
+| `demos/sfx_xt3d_cacophony.livecodescript` | FOR OWNER: many sounds at once through xt3d's mixer (plays on the speakers) |
 | `demos/sfx_demo.livecodescript` | FOR OWNER: preset buttons, the wave drawn, the numbers editable |
 | `tests/run_test.sh`, `tests/sfx_test.txt` | 30 checks in a real Windows LiveCode through LIB_MCP; silent |
 
