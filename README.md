@@ -92,3 +92,7 @@ licence; itself based on DrPetter's sfxr. Only `src/rfxgen.h` and `LICENSE` were
 tool was not. One difference: our own small random-number generator replaces the C library's, so
 a seed gives the same sound on every machine (the numbers therefore differ from rFXGen's own for
 the same seed; `.rfx` files are the same format and sound the same).
+
+## Licence
+
+GPL-3.0 (see `LICENSE`), because the xTalk work here is built on the GPL-licensed LiveCode Community 9 engine. Copyright (c) 2026 xAction.
