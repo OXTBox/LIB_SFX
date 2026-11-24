@@ -1,0 +1,26 @@
+# The shared sound kit: one line per sound type (= one folder of .wav files).
+# type <tab> preset <tab> seeds (one .wav per seed) [<tab> name=value overrides, ; between]
+# Presets: coin laser explosion powerup hit jump blip random. Change a seed, run
+#   python.exe tools/bake_kit.py   (Windows Python: it loads C:/xtsfx/extension xtsfx.dll)
+# and the folder kit/Sounds/<type> is made again. Same seed = same sound, always.
+# The first six are the names the engine's games already call (Sound.Play "Explode").
+PlayerLaser	laser	11,12,13,14
+Bullet	laser	21,22,23	startFrequency=0.45;decayTime=0.12
+Enemy	blip	31,32
+Explode	explosion	44,42,43
+PlayerCrash	explosion	51	decayTime=0.6;sustainTime=0.3
+Warp	powerup	61,62
+Pickup	coin	71,72,73
+Powerup	powerup	81,82
+Hit	hit	91,92,93
+Hurt	hit	101,102	waveType=3
+Jump	jump	111,112
+Blip	blip	121,122
+Select	blip	131
+Shoot	laser	141,142,143
+Bounce	jump	151,152	decayTime=0.08
+Thud	hit	161,162	startFrequency=0.12
+Win	powerup	171	sustainTime=0.35;decayTime=0.5
+Lose	random	181	slide=-0.35;sustainTime=0.3;decayTime=0.5
+Throw	jump	191	slide=0.25
+Zap	laser	201,202	waveType=2

@@ -7,3 +7,5 @@ __pycache__/
 *.exp
 *.lcm
 *.wav
+!kit/Sounds/**/*.wav
+!kit/Music/*.wav

@@ -96,3 +96,21 @@ the same seed; `.rfx` files are the same format and sound the same).
 ## Licence
 
 GPL-3.0 (see `LICENSE`), because the xTalk work here is built on the GPL-licensed LiveCode Community 9 engine. Copyright (c) 2026 xAction.
+
+## The shared kit: sound and music for every game (23 Nov 2026)
+
+`kit/Sounds/<Type>/*.wav` (42 sounds, 20 types, 700 KB) and `kit/Music/*.wav` (5 chip songs,
+7 MB) are what the engine plays when a game has no sounds of its own (ISSUES 0013, tube p1-09).
+
+| Make it again | How |
+|---|---|
+| sounds | edit `kit/kit.txt` (type, preset, seeds, overrides), then **Windows** Python: `python.exe tools/bake_kit.py` (it loads the built `xtsfx.dll` with ctypes; no LiveCode) |
+| music | edit the `SONGS` list in `tools/make_music.py` (seed, key, tempo, major/minor, bars), then `python3 tools/make_music.py` |
+
+Types: PlayerLaser Bullet Enemy Explode PlayerCrash Warp (the names Canyon and Hunter already
+call), Pickup Powerup Hit Hurt Jump Blip Select Shoot Bounce Thud Win Lose Throw Zap. In a game:
+`Sound.Play "Pickup"`. A song with "theme" in its name is the title music, not in the game list.
+
+Where the engine looks (Audio.Roots, first one that has a type wins, so a game can replace any
+kit sound): `Vibecode3D_Games/Audio/<Game>/Sounds|Music`, `<stack folder>/Data/`,
+`Vibecode3D Common/` beside the games (the install on V:), then this kit.

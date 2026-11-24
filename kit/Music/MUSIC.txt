@@ -1,0 +1,6 @@
+Made by LIB_SFX/tools/make_music.py (change a seed there, run it again).
+theme_vibecode	seed 7	root 57	112 bpm	minor	34.5 s
+song_arcade_run	seed 21	root 60	140 bpm	major	27.6 s
+song_night_patrol	seed 33	root 55	100 bpm	minor	38.6 s
+song_bright_sky	seed 48	root 62	126 bpm	major	30.7 s
+song_deep_cave	seed 59	root 50	88 bpm	minor	32.9 s
